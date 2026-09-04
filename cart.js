@@ -1,24 +1,29 @@
-function calc(items, type, discount, user) {
-  var total = 0;
-  for (var i = 0; i < items.length; i++) {
-    if (type == "regular") {
-      total = total + items[i].price * items[i].qty;
-    } else if (type == "vip") {
-      total = total + items[i].price * items[i].qty;
-      total = total - (items[i].price * items[i].qty * 0.1);
-    }
-  }
-  if (discount > 0) {
-    total = total - discount;
-  }
-  if (user == null || user == undefined) {
-    console.log("error no user");
-    return 0;
-  }
-  if (total < 0) {
-    total = 0;
-  }
-  return total;
+const VIP_DISCOUNT_RATE = 0.1;
+
+function calculateItemTotal(item) {
+  return item.price * item.qty;
 }
 
-module.exports = calc;
+function applyVipDiscount(subtotal) {
+  return subtotal - (subtotal * VIP_DISCOUNT_RATE);
+}
+
+function calculateCartTotal(items, customerType, manualDiscount, user) {
+  if (!user) {
+    throw new Error("A valid user is required to calculate the cart total.");
+  }
+
+  let subtotal = items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+
+  if (customerType === "vip") {
+    subtotal = applyVipDiscount(subtotal);
+  }
+
+  if (manualDiscount > 0) {
+    subtotal -= manualDiscount;
+  }
+
+  return Math.max(subtotal, 0);
+}
+
+module.exports = calculateCartTotal;

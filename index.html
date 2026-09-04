@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrito de Compras</title>
+</head>
+<body>
+  <h1>Total del carrito</h1>
+  <p id="total">$0</p>
+  <button id="calculate">Calcular total</button>
+
+  <script>
+    function calculateCartTotal(items, customerType, manualDiscount, user) {
+      if (!user) throw new Error("A valid user is required.");
+      let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+      if (customerType === "vip") subtotal -= subtotal * 0.1;
+      if (manualDiscount > 0) subtotal -= manualDiscount;
+      return Math.max(subtotal, 0);
+    }
+
+    document.getElementById('calculate').addEventListener('click', () => {
+      const items = [{ price: 100, qty: 2 }];
+      const total = calculateCartTotal(items, 'regular', 0, { id: 1 });
+      document.getElementById('total').innerText = '$' + total;
+    });
+  </script>
+</body>
+</html>
